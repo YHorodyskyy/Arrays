@@ -1,0 +1,16 @@
+{
+  "name": "slavhor/crowdin-test-task",
+  "description": "The test task for PHP course.",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "slavhor",
+      "email": "Yaroslav.Horodyskyy@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  }
+}
