@@ -4,41 +4,35 @@ namespace App;
 
 use App\Array\ArrayGenerator;
 use App\Array\ArrayRenderer;
-use App\Array\Sort\Diagonal;
-use App\Array\Sort\Horizontal;
-use App\Array\Sort\Snail;
-use App\Array\Sort\Snake;
-use App\Array\Sort\Vertical;
+use App\Log\LogArray;
 
 class BaseController
 {
-
     public function run(): void
     {
-        $this->index();
+        LogArray::clear();
+        $generator = new ArrayGenerator();
+        $array = $generator->getArray();
+        ArrayRenderer::render($array, "Input Array");
+        LogArray::write2DArray($array);
+
+        $sortClasses = [
+            "\App\Array\Sort\Horizontal",
+            "\App\Array\Sort\Vertical",
+            "\App\Array\Sort\Snake",
+            "\App\Array\Sort\Diagonal",
+            "\App\Array\Sort\Snail",
+        ];
+        foreach ($sortClasses as $class) {
+            $this->renderAndLogArray($class, $array);
+        }
     }
 
-    public function index(): void
+    private function renderAndLogArray($className, $array): void
     {
-        $generator = new ArrayGenerator();
-        $startArray = $generator->newArray();
-        $renderer = new ArrayRenderer();
-
-        echo $renderer->renderAndWriteToFile($startArray, "Input Array");
-
-        $engine = new Horizontal();
-        echo $renderer->renderAndWriteToFile($engine->sort($startArray), "Horizontal sort");
-
-        $engine = new Vertical();
-        echo $renderer->renderAndWriteToFile($engine->sort($startArray), "Vertical sort");
-
-        $engine = new Snake();
-        echo $renderer->renderAndWriteToFile($engine->sort($startArray), "Snake sort");
-
-        $engine = new Diagonal();
-        echo $renderer->renderAndWriteToFile($engine->sort($startArray), "Diagonal sort");
-
-        $engine = new Snail();
-        echo $renderer->renderAndWriteToFile($engine->sort($startArray), "Snail sort");
+        $engine = new $className();
+        $engine->sort($array);
+        ArrayRenderer::render($array, $className);
+        LogArray::write2DArray($array, $className);
     }
 }

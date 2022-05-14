@@ -2,11 +2,9 @@
 
 namespace App\Array;
 
-use App\Log;
-
 class ArrayRenderer
 {
-    public function render($array, $title = ""): string
+    public static function render($array, $title = ""): void
     {
         $content = "\n\n";
         if (!empty($title)) {
@@ -14,32 +12,25 @@ class ArrayRenderer
         }
         $content .= "<table style=\"border=1px;\">";
         foreach ($array as $row) {
-            $content .= $this->renderRow($row);
+            $content .= self::wrapRow($row);
         }
         $content .= "</table>";
         $content .= "<style>td { text-align: right}</style>";
-        return $content;
+        echo $content;
     }
 
-    public function renderAndWriteToFile($array, $title = ""): string
-    {
-        $content = $this->render($array, $title);
-        Log::write($content);
-        return $content;
-    }
-
-    private function renderCell(int $cell): string
-    {
-        return "<td>&nbsp;&nbsp;&nbsp;$cell</td>";
-    }
-
-    private function renderRow(array $row): string
+    private static function wrapRow(array $row): string
     {
         $content = "<tr>";
         foreach ($row as $cell) {
-            $content .= $this->renderCell($cell);
+            $content .= self::wrapCell($cell);
         }
         $content .= "</tr>";
         return $content;
+    }
+
+    private static function wrapCell(int $cell): string
+    {
+        return "<td>&nbsp;&nbsp;&nbsp;$cell</td>";
     }
 }

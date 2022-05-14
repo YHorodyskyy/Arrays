@@ -8,17 +8,10 @@ class ArrayGenerator
 
     public function __construct(int $depth = 0)
     {
-        $this->depth = ($depth ?: rand(2, 4));
+        $this->depth = ($depth ?: rand(3, 6));
     }
 
-    private function getNumbers(): array
-    {
-        $source = range(1, $this->depth ** 2);
-        shuffle($source);
-        return $source;
-    }
-
-    private function getArray(): array
+    public function getArray(): array
     {
         $array = [];
         $numbers = $this->getNumbers();
@@ -31,8 +24,10 @@ class ArrayGenerator
         return $array;
     }
 
-    public function newArray(): array
+    private function getNumbers(): array
     {
-        return $this->getArray();
+        $source = range(1, $this->depth ** 2);
+        shuffle($source);
+        return $source;
     }
 }

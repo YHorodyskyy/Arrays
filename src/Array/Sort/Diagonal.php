@@ -4,18 +4,16 @@ namespace App\Array\Sort;
 
 class Diagonal extends BaseSort
 {
-    public function sort(array $array): array
+    public function sort(array &$array): void
     {
         $this->readArray($array);
-        $matrix = [];
-        $position = 0;
+        $array = [];
         $x = 0;
         $y = 0;
         $max = 0;
         $min = 0;
         do {
-            $matrix[$x][$y] = $this->numbers[$position];
-            $position++;
+            $array[$x][$y] = array_shift($this->numbers);
             if (($y === $max)) {
                 if ($y === ($this->depth - 1)) {
                     $min++;
@@ -29,6 +27,5 @@ class Diagonal extends BaseSort
                 $y++;
             }
         } while (($x < ($this->depth)) && ($y < ($this->depth)));
-        return $matrix;
     }
 }

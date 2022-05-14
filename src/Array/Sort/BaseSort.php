@@ -2,19 +2,19 @@
 
 namespace App\Array\Sort;
 
-class BaseSort
+abstract class BaseSort implements SortInterface
 {
     protected int $depth;
     protected array $numbers;
+
+    abstract public function sort(array &$array): void;
 
     protected function readArray(array $array): void
     {
         $this->numbers = [];
         $this->depth = 0;
         foreach ($array as $row) {
-            foreach ($row as $number) {
-                $this->numbers[] = $number;
-            }
+            $this->numbers = array_merge($this->numbers, $row);
             $this->depth++;
         }
         sort($this->numbers);

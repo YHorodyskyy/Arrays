@@ -4,15 +4,14 @@ namespace App\Array\Sort;
 
 class Snail extends BaseSort
 {
-    public function sort(array $array): array
+    public function sort(array &$array): void
     {
         $this->readArray($array);
-        $matrix = $this->fillArray();
-        ksort($matrix);
-        foreach ($matrix as $key => $value){
-            ksort($matrix[$key]);
+        $array = $this->fillArray();
+        ksort($array);
+        foreach ($array as $key => $value){
+            ksort($array[$key]);
         }
-        return $matrix;
     }
 
     protected function fillArray(): array
@@ -21,7 +20,6 @@ class Snail extends BaseSort
         $numElems = count($this->numbers);
         $arrayXY = [0,-1];
         $direction = 0;
-        $position = 0;
         for($i=0;$i<$numElems;$i++){
             $checkXY = $arrayXY;
             switch($direction%4){
@@ -44,8 +42,7 @@ class Snail extends BaseSort
                 continue;
             }
             $arrayXY = $checkXY;
-            $matrix[$checkXY[0]][$checkXY[1]] = $this->numbers[$position];
-            $position++;
+            $matrix[$checkXY[0]][$checkXY[1]] = array_shift($this->numbers);
         }
         return $matrix;
     }
