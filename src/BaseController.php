@@ -14,8 +14,7 @@ class BaseController
         $generator = new ArrayGenerator();
         $array = $generator->getArray();
         ArrayRenderer::render($array, "Input Array");
-        LogArray::write2DArray($array);
-
+        LogArray::write2DArray($array, "Input Array");
         $sortClasses = [
             "\App\Array\Sort\Horizontal",
             "\App\Array\Sort\Vertical",
