@@ -5,10 +5,6 @@ namespace App;
 use App\Array\ArrayGenerator;
 use App\Array\Sort\ArraySortFactory;
 use App\Writer\ArrayWriterFactory;
-use App\Writer\MysqlWriter;
-use App\Writer\PageWriter;
-use App\Writer\FileWriter;
-use App\Writer\Writer;
 
 class App
 {
