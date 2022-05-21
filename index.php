@@ -17,5 +17,8 @@
 
 require_once realpath("vendor/autoload.php");
 
-$application = new \App\BaseController();
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
+$application = new \App\App();
 $application->run();

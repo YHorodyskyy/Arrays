@@ -4,21 +4,23 @@ namespace App\Array\Sort;
 
 class Snake extends BaseSort
 {
-    public function sort(array &$array): void
+    public function sort(array $array): array
     {
         $this->readArray($array);
+        $outputArray = [];
         for ($i = 0; $i < $this->depth; $i++) {
             if ($i % 2 === 0) {
                 for ($j = 0; $j < $this->depth; $j++) {
-                    $array[$i][$j] = array_shift($this->numbers);
+                    $outputArray[$i][$j] = array_shift($this->numbers);
                 }
             } else {
                 for ($j = $this->depth - 1; $j >= 0; $j--) {
-                    $array[$i][$j] = array_shift($this->numbers);
+                    $outputArray[$i][$j] = array_shift($this->numbers);
                 }
             }
-            ksort($array[$i]);
+            ksort($outputArray[$i]);
         }
+        return $outputArray;
     }
 
 }

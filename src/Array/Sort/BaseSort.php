@@ -7,7 +7,7 @@ abstract class BaseSort implements SortInterface
     protected int $depth;
     protected array $numbers;
 
-    abstract public function sort(array &$array): void;
+    abstract public function sort(array $array): array;
 
     protected function readArray(array $array): void
     {

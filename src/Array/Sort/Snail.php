@@ -4,14 +4,15 @@ namespace App\Array\Sort;
 
 class Snail extends BaseSort
 {
-    public function sort(array &$array): void
+    public function sort(array $array): array
     {
         $this->readArray($array);
-        $array = $this->fillArray();
-        ksort($array);
-        foreach ($array as $key => $value){
-            ksort($array[$key]);
+        $outputArray = $this->fillArray();
+        ksort($outputArray);
+        foreach ($outputArray as $key => $value){
+            ksort($outputArray[$key]);
         }
+        return $outputArray;
     }
 
     protected function fillArray(): array
