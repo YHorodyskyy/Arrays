@@ -6,21 +6,24 @@ class DatabaseGateway
 {
     private static \PDO $db;
 
-    public static function getConnection(): \PDO
+    public static function getConnection(array $config): \PDO
     {
         if (!isset(static::$db)) {
-            static::connect();
+            static::connect($config);
         }
         return static::$db;
     }
 
-    private static function connect(): void
+    private static function connect(array $config): void
     {
-        $dsn = $_ENV['DATA_BASE_DSN'] ?? "mysql:host=" . $_ENV['DATA_BASE_HOST'] . ";dbname=" . $_ENV['DATA_BASE_NAME'];
-        static::$db = new \PDO(
-            $dsn,
-            $_ENV['DATA_BASE_USER'],
-            $_ENV['DATA_BASE_PASS']
-        );
+        try {
+            static::$db = new \PDO(
+                $config["driver"] . ":host=" . $config["host"] . ";dbname=" . $config["database"],
+                $config["user"],
+                $config["pass"]
+            );
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
+        }
     }
 }

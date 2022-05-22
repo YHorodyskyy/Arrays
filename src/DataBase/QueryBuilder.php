@@ -2,6 +2,8 @@
 
 namespace App\DataBase;
 
+use App\Config;
+
 class QueryBuilder
 {
     private const QUERY_TYPE_INSERT = "INSERT";
@@ -11,9 +13,12 @@ class QueryBuilder
     private array $values;
     private \PDO $db;
 
-    public function __construct()
+    public function __construct(array $dbConfig = [])
     {
-        $this->db = DatabaseGateway::getConnection();
+        if (empty($dbConfig)){
+            $dbConfig = (new Config())->db;
+        }
+        $this->db = DatabaseGateway::getConnection($dbConfig);
     }
 
     public function execute(): void

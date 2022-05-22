@@ -20,7 +20,6 @@ class App
     public function run(): void
     {
         $inputArray = (new ArrayGenerator())->getArray();
-
         foreach ($this->sortFactory->getAll() as $sortEngine) {
             $outputArray = $sortEngine->sort($inputArray);
             foreach ($this->writerFactory->getAll() as $writeEngine) {
