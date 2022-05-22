@@ -8,13 +8,11 @@ use App\Writer\ArrayWriterFactory;
 
 class App
 {
-    private ArraySortFactory $sortFactory;
-    private ArrayWriterFactory $writerFactory;
-
-    public function __construct()
+    public function __construct(
+        protected ArraySortFactory   $sortFactory = new ArraySortFactory(),
+        protected ArrayWriterFactory $writerFactory = new ArrayWriterFactory()
+    )
     {
-        $this->sortFactory = new ArraySortFactory();
-        $this->writerFactory = new ArrayWriterFactory();
     }
 
     public function run(): void
