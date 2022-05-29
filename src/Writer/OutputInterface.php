@@ -4,5 +4,5 @@ namespace App\Writer;
 
 interface OutputInterface
 {
-    public function write(array $inputArray, array $outputArray, string $sortType): void;
+    public function prepareToOutput(array $inputArray, array $outputArray, string $sortType): string;
 }

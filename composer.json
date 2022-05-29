@@ -16,6 +16,7 @@
   "require": {
     "php": ">= 8.1",
     "vlucas/phpdotenv": "^5.4",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "eftec/bladeone": "^4.5"
   }
 }

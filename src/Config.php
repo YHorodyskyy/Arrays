@@ -4,9 +4,13 @@ namespace App;
 
 /**
  * @property array|null $db
+ * @property array|null $template
  */
 class Config
 {
+    /**
+     * @var mixed|null
+     */
     private static array $config = [];
 
     public function __construct()
@@ -29,6 +33,12 @@ class Config
             "database" => $_ENV["DB_DATABASE"],
             "user" => $_ENV["DB_USER"],
             "pass" => $_ENV["DB_PASS"]
+        ];
+
+        static::$config['template'] = [
+            "engine" => "BladeOne",
+            "views" => './views',
+            "cache" => './cache',
         ];
     }
 }

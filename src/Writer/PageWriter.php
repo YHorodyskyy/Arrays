@@ -2,9 +2,14 @@
 
 namespace App\Writer;
 
-class PageWriter extends Writer
+class PageWriter extends Writer implements OutputInterface
 {
     public function write(array $inputArray, array $outputArray, string $sortType): void
+    {
+        echo $this->prepareToOutput($inputArray, $outputArray, $sortType);
+    }
+
+    public function prepareToOutput(array $inputArray, array $outputArray, string $sortType): string
     {
         $content = "\n";
         $content .= "<table><tr><h2>$sortType</h2></tr><tr>";
@@ -13,7 +18,7 @@ class PageWriter extends Writer
         $content .= "<td>" . $this->wrapArray($outputArray) . "</td>";
         $content .= "</tr></table>";
         $content .= "<style>td { text-align: right}</style>";
-        echo $content;
+        return $content;
     }
 
     private function wrapArray(array $array): string

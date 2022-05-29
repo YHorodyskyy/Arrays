@@ -11,7 +11,7 @@ class ArrayWriterFactory
         "\App\Writer\MysqlWriter",
     ];
 
-    public function getInstance(string $writerClass): OutputInterface
+    public function getInstance(string $writerClass): WriteInterface
     {
         if (!key_exists($writerClass, static::$instances)) {
             static::$instances[$writerClass] = new $writerClass();
