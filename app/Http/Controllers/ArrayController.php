@@ -20,8 +20,7 @@ class ArrayController extends Controller
 
     public function __construct(
         protected ArraySortFactory $arraySortFactory,
-        protected ArrayWriterFactory $arrayWriterFactory,
-        protected ArrayToFile $arrayToFile
+        protected ArrayWriterFactory $arrayWriterFactory
     )
     {
 
@@ -64,8 +63,9 @@ class ArrayController extends Controller
     public function downloadArray(Request $request): StreamedResponse
     {
         $this->prepareArrays($request->array_size, $request->array_sort);
-        $this->arrayToFile->write($this->inputArray, $this->outputArray, $request->array_sort);
-        return $this->arrayToFile->download();
+        $fileWriter = $this->arrayWriterFactory->getInstance(ArrayToFile::class);
+        $fileWriter->write($this->inputArray, $this->outputArray, $request->array_sort);
+        return $fileWriter->download();
     }
 
     protected function prepareArrays(int $size, string $sortType): void

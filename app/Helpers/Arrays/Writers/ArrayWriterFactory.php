@@ -6,7 +6,7 @@ class ArrayWriterFactory
 {
     private static array $instances = [];
     private array $writeClasses = [
-        "\App\Helpers\Arrays\Writers\FileWriter",
+        "\App\Helpers\Arrays\Writers\ArrayToFile",
         "\App\Helpers\Arrays\Writers\MysqlWriter",
     ];
 

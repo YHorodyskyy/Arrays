@@ -5,7 +5,7 @@ namespace App\Helpers\Arrays\Writers;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ArrayToFile extends Writer
+class ArrayToFile extends Writer implements DownloadInterface
 {
     public string $file = "arrays.txt";
 
