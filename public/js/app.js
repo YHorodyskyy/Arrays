@@ -5376,8 +5376,6 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
  */
 
 
-__webpack_require__(/*! ./components/Example */ "./resources/js/components/Example.js");
-
 __webpack_require__(/*! ./components/Arrays */ "./resources/js/components/Arrays.js");
 
 /***/ }),
@@ -5467,9 +5465,9 @@ function ArrayTable(props) {
           children: row.map(function (item) {
             return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("td", {
               children: item
-            });
+            }, item);
           })
-        });
+        }, row);
       })
     })
   });
@@ -5500,17 +5498,30 @@ function ArraysCompare(props) {
 
 function LastSortsTable(props) {
   var array = props.records;
+  var url = "/api/array/download/:id";
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
     children: array.map(function (row) {
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
         className: "card mt-3",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
           className: "card-header",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("h3", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("h3", {
+            className: "float-start",
             children: [row.sort_type, " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("small", {
               children: ["(", new Date(row.created_at).toDateString(), ")"]
             })]
-          })
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+            className: "float-end",
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("a", {
+              href: url.replace(':id', row.id),
+              download: true,
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
+                type: "button",
+                className: "btn btn-primary",
+                children: "Download"
+              })
+            })
+          })]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
           className: "card-body",
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(ArraysCompare, {
@@ -5518,7 +5529,7 @@ function LastSortsTable(props) {
             outputArray: JSON.parse(row.output_array)
           })
         })]
-      });
+      }, row.id);
     })
   });
 }
@@ -5558,8 +5569,7 @@ var MainContainer = /*#__PURE__*/function (_React$Component) {
       error: null,
       isLoaded: false,
       message: null,
-      inputArray: [],
-      outputArray: [],
+      data: [],
       records: [],
       arraySize: 3,
       arraySort: "Vertical"
@@ -5588,30 +5598,42 @@ var MainContainer = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "printArray",
     value: function printArray() {
-      this.componentDidMount("");
+      this.loadData("");
     }
   }, {
     key: "writeToDBArray",
     value: function writeToDBArray() {
-      this.componentDidMount("/write");
+      this.loadData("/write");
     }
   }, {
-    key: "componentDidMount",
-    value: function componentDidMount() {
+    key: "buildAPIUrl",
+    value: function buildAPIUrl() {
+      var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+      return "/api/array" + action + "/?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort;
+    }
+  }, {
+    key: "loadData",
+    value: function loadData() {
       var _this2 = this;
 
       var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-      fetch("/array" + action + "/?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort).then(function (res) {
-        return res.json();
+      var url = this.buildAPIUrl(action);
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }).then(function (response) {
+        return response.json();
       }).then(function (result) {
-        var _result$records, _result$data$inputArr, _result$data$outputAr;
+        var _result$records, _result$data;
 
         _this2.setState({
           isLoaded: true,
           records: (_result$records = result.records) !== null && _result$records !== void 0 ? _result$records : [],
           message: result.message,
-          inputArray: (_result$data$inputArr = result.data.inputArray) !== null && _result$data$inputArr !== void 0 ? _result$data$inputArr : [],
-          outputArray: (_result$data$outputAr = result.data.outputArray) !== null && _result$data$outputAr !== void 0 ? _result$data$outputAr : []
+          data: (_result$data = result.data) !== null && _result$data !== void 0 ? _result$data : []
         });
       }, function (error) {
         _this2.setState({
@@ -5621,14 +5643,20 @@ var MainContainer = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.loadData();
+    }
+  }, {
     key: "render",
     value: function render() {
+      var _data$inputArray, _data$outputArray;
+
       var _this$state = this.state,
           message = _this$state.message,
-          inputArray = _this$state.inputArray,
-          outputArray = _this$state.outputArray,
-          records = _this$state.records;
-      var fileDownload = "array/download?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort;
+          records = _this$state.records,
+          data = _this$state.data;
+      var fileDownload = "api/array/download?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort;
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
           className: "row g-5",
@@ -5638,13 +5666,13 @@ var MainContainer = /*#__PURE__*/function (_React$Component) {
               className: "row",
               children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("label", {
                 htmlFor: "arraySize",
-                className: "col-sm-8 col-form-label",
+                className: "col-sm-7 col-form-label",
                 children: ["Size array, ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
                   className: "small",
                   children: "2-10"
                 })]
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-                className: "col-sm-4",
+                className: "col-sm-5",
                 children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("input", {
                   type: "number",
                   min: "2",
@@ -5720,13 +5748,13 @@ var MainContainer = /*#__PURE__*/function (_React$Component) {
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
           className: "row mt-3 justify-content-center",
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(ArraysCompare, {
-            inputArray: inputArray,
-            outputArray: outputArray
+            inputArray: (_data$inputArray = data.inputArray) !== null && _data$inputArray !== void 0 ? _data$inputArray : [],
+            outputArray: (_data$outputArray = data.outputArray) !== null && _data$outputArray !== void 0 ? _data$outputArray : []
           })
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
           className: "row mt-3 justify-content-center",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h2", {
-            children: "Other result"
+            children: "Last result"
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(LastSortsTable, {
             records: records
           })]
@@ -5740,55 +5768,6 @@ var MainContainer = /*#__PURE__*/function (_React$Component) {
 
 if (document.getElementById('app')) {
   react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(MainContainer), document.getElementById('app'));
-}
-
-/***/ }),
-
-/***/ "./resources/js/components/Example.js":
-/*!********************************************!*\
-  !*** ./resources/js/components/Example.js ***!
-  \********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
-
-
-
-
-function Example() {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-    className: "container",
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-      className: "row justify-content-center",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "col-md-8",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-          className: "card",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-            className: "card-header",
-            children: "Example Component"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-            className: "card-body",
-            children: "I'm an example component!"
-          })]
-        })
-      })
-    })
-  });
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Example);
-
-if (document.getElementById('example')) {
-  react_dom__WEBPACK_IMPORTED_MODULE_1__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(Example, {}), document.getElementById('app'));
 }
 
 /***/ }),

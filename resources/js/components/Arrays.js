@@ -9,9 +9,9 @@ function ArrayTable(props) {
         <table className="table text-end">
             <tbody>
             {array.map((row) => (
-                <tr>
+                <tr key={row}>
                     {row.map((item) => (
-                        <td>{item}</td>
+                        <td key={item}>{item}</td>
                     ))}
                 </tr>
             ))}
@@ -39,15 +39,22 @@ function ArraysCompare(props) {
 
 function LastSortsTable(props) {
     const array = props.records;
+    const url = "/api/array/download/:id";
     return (
         <div>
             {array.map((row) => (
-                <div className="card mt-3">
+                <div className="card mt-3" key={row.id}>
                     <div className="card-header">
-                        <h3>{row.sort_type} <small>({(new Date(row.created_at)).toDateString()})</small></h3>
+                        <h3 className="float-start">{row.sort_type} <small>({(new Date(row.created_at)).toDateString()})</small></h3>
+                        <div className="float-end">
+                            <a href={url.replace(':id', row.id)} download>
+                                <button type="button" className="btn btn-primary">Download</button>
+                            </a>
+                        </div>
                     </div>
                     <div className="card-body">
-                        <ArraysCompare inputArray={JSON.parse(row.input_array)} outputArray={JSON.parse(row.output_array)}/>
+                        <ArraysCompare inputArray={JSON.parse(row.input_array)}
+                                       outputArray={JSON.parse(row.output_array)}/>
                     </div>
                 </div>
             ))}
@@ -77,8 +84,7 @@ class MainContainer extends React.Component {
             error: null,
             isLoaded: false,
             message: null,
-            inputArray: [],
-            outputArray: [],
+            data: [],
             records: [],
             arraySize: 3,
             arraySort: "Vertical"
@@ -98,24 +104,34 @@ class MainContainer extends React.Component {
     }
 
     printArray() {
-        this.componentDidMount("");
+        this.loadData("");
     };
 
     writeToDBArray() {
-        this.componentDidMount("/write");
+        this.loadData("/write");
     };
 
-    componentDidMount(action = '') {
-        fetch("/array" + action + "/?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort)
-            .then(res => res.json())
+    buildAPIUrl(action = '') {
+        return "/api/array" + action + "/?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort
+    };
+
+    loadData(action = '') {
+        const url = this.buildAPIUrl(action);
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => response.json())
             .then(
                 (result) => {
                     this.setState({
                         isLoaded: true,
                         records: result.records ?? [],
                         message: result.message,
-                        inputArray: result.data.inputArray ?? [],
-                        outputArray: result.data.outputArray ?? []
+                        data: result.data ?? []
                     });
                 },
                 (error) => {
@@ -125,19 +141,23 @@ class MainContainer extends React.Component {
                     });
                 }
             )
+    };
+
+    componentDidMount() {
+        this.loadData();
     }
 
     render() {
-        const {message, inputArray, outputArray, records} = this.state;
-        const fileDownload = "array/download?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort;
+        const {message, records, data} = this.state;
+        const fileDownload = "api/array/download?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort;
         return (
             <div>
                 <div className="row g-5">
                     <div className="col-auto">
                         <div className="row">
-                            <label htmlFor="arraySize" className="col-sm-8 col-form-label">Size array, <span
+                            <label htmlFor="arraySize" className="col-sm-7 col-form-label">Size array, <span
                                 className="small">2-10</span></label>
-                            <div className="col-sm-4">
+                            <div className="col-sm-5">
                                 <input type="number" min="2" max="10" step="1" className="form-control"
                                        name="array_size" id="arraySize"
                                        value={this.state.arraySize} onChange={this.setArraySize}
@@ -172,10 +192,10 @@ class MainContainer extends React.Component {
                     <Alert level="info" message={message}/>
                 </div>
                 <div className="row mt-3 justify-content-center">
-                    <ArraysCompare inputArray={inputArray} outputArray={outputArray} />
+                    <ArraysCompare inputArray={data.inputArray ?? []} outputArray={data.outputArray ?? []}/>
                 </div>
                 <div className="row mt-3 justify-content-center">
-                    <h2>Other result</h2>
+                    <h2>Last result</h2>
                     <LastSortsTable records={records}/>
                 </div>
             </div>

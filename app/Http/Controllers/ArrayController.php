@@ -8,6 +8,7 @@ use App\Helpers\Arrays\Sort\ArraySortType;
 use App\Helpers\Arrays\Writers\ArrayToFile;
 use App\Helpers\Arrays\Writers\ArrayWriterFactory;
 use App\Helpers\Arrays\Writers\MysqlWriter;
+use App\Http\Requests\SortParametersRequest;
 use App\Models\ArraySort;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class ArrayController extends Controller
     private array $outputArray;
 
     public function __construct(
-        protected ArraySortFactory $arraySortFactory,
+        protected ArraySortFactory   $arraySortFactory,
         protected ArrayWriterFactory $arrayWriterFactory
     )
     {
@@ -31,7 +32,7 @@ class ArrayController extends Controller
         return view('main');
     }
 
-    public function sortedArray(Request $request): JsonResponse
+    public function sortedArray(SortParametersRequest $request): JsonResponse
     {
         $this->prepareArrays($request->array_size, $request->array_sort);
 
@@ -58,6 +59,13 @@ class ArrayController extends Controller
             "records" => ArraySort::latest()->get()->toArray(),
             "message" => "Results written successfully!"
         ]);
+    }
+
+    public function downloadById(ArraySort $arraySort): StreamedResponse
+    {
+        $fileWriter = $this->arrayWriterFactory->getInstance(ArrayToFile::class);
+        $fileWriter->write(json_decode($arraySort->input_array), json_decode($arraySort->output_array), $arraySort->sort_type);
+        return $fileWriter->download();
     }
 
     public function downloadArray(Request $request): StreamedResponse

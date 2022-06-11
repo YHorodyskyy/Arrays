@@ -14,10 +14,4 @@ use App\Http\Controllers\ArrayController;
 |
 */
 
-Route::get('/', [ArrayController::class, 'index']);
-
-Route::controller(\App\Http\Controllers\ArrayController::class)->group(function () {
-    Route::get('/array', 'sortedArray');
-    Route::get('/array/download', 'downloadArray');
-    Route::get('/array/write', 'writeToDB');
-});
+Route::get('/', [ArrayController::class, 'index'])->name('home');
