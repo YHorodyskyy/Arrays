@@ -18,11 +18,6 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
-    @env(['staging', 'production'])
-        <script src="{{ secure_asset('js/app.js') }}" defer></script>
-        <link href="{{ secure_asset('css/app.css') }}" rel="stylesheet">
-    @endenv
 </head>
 <body>
     <div class="col-lg-8 mx-auto p-3 py-md-5">
