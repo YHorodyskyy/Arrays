@@ -7,6 +7,7 @@ use App\Helpers\Arrays\Sort\ArraySortFactory;
 use App\Helpers\Arrays\Sort\ArraySortType;
 use App\Helpers\Arrays\Writers\ArrayToFile;
 use App\Helpers\Arrays\Writers\ArrayWriterFactory;
+use App\Helpers\Arrays\Writers\ArrayWriterType;
 use App\Helpers\Arrays\Writers\MysqlWriter;
 use App\Http\Requests\SortParametersRequest;
 use App\Models\ArraySort;
@@ -41,14 +42,14 @@ class ArrayController extends Controller
                 "inputArray" => $this->inputArray,
                 "outputArray" => $this->outputArray,
             ],
-            "records" => ArraySort::latest()->get()->toArray()
+            "records" => ArraySort::latest()->take(10)->get()->toArray()
         ]);
     }
 
     public function writeToDB(Request $request): JsonResponse
     {
         $this->prepareArrays($request->array_size, $request->array_sort);
-        $this->arrayWriterFactory->getInstance(MysqlWriter::class)
+        $this->arrayWriterFactory->getInstance(ArrayWriterType::ToMYSQL)
             ->write($this->inputArray, $this->outputArray, $request->array_sort);
 
         return response()->json([
@@ -63,7 +64,7 @@ class ArrayController extends Controller
 
     public function downloadById(ArraySort $arraySort): StreamedResponse
     {
-        $fileWriter = $this->arrayWriterFactory->getInstance(ArrayToFile::class);
+        $fileWriter = $this->arrayWriterFactory->getInstance(ArrayWriterType::ToFile);
         $fileWriter->write(json_decode($arraySort->input_array), json_decode($arraySort->output_array), $arraySort->sort_type);
         return $fileWriter->download();
     }
@@ -71,7 +72,7 @@ class ArrayController extends Controller
     public function downloadArray(Request $request): StreamedResponse
     {
         $this->prepareArrays($request->array_size, $request->array_sort);
-        $fileWriter = $this->arrayWriterFactory->getInstance(ArrayToFile::class);
+        $fileWriter = $this->arrayWriterFactory->getInstance(ArrayWriterType::ToFile);
         $fileWriter->write($this->inputArray, $this->outputArray, $request->array_sort);
         return $fileWriter->download();
     }

@@ -7,7 +7,14 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ArrayToFile extends Writer implements DownloadInterface
 {
-    public string $file = "arrays.txt";
+    private string $file;
+    private string $disk;
+
+    public function __construct(string $file = "", $disk = "")
+    {
+        $this->file = $file ? $file : "arrays.txt";
+        $this->disk = $disk ? $disk : config("filesystems.default");
+    }
 
     public function write(array $inputArray, array $outputArray, string $sortType): void
     {
@@ -15,12 +22,12 @@ class ArrayToFile extends Writer implements DownloadInterface
         $content .= $this->wrapArray($inputArray);
         $content .= $sortType;
         $content .= $this->wrapArray($outputArray);
-        Storage::put($this->file,$content);
+        Storage::disk($this->disk)->put($this->file,$content);
     }
 
     public function download(): StreamedResponse
     {
-        return Storage::download($this->file);
+        return Storage::disk($this->disk)->download($this->file);
     }
 
     private function wrapArray($array): string

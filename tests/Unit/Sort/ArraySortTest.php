@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Sort;
 
 use App\Helpers\Arrays\Sort\Diagonal;
 use App\Helpers\Arrays\Sort\Horizontal;

@@ -7,6 +7,8 @@ use Tests\TestCase;
 
 class WebLoadTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * @dataProvider providePathWithSuccessResponse
      * @param string $path

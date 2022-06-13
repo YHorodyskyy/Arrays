@@ -7,13 +7,13 @@ use App\Helpers\Arrays\Sort\ArraySortType;
 class ArraySortFactory
 {
     private static array $instances = [];
-    private static string $sortNameSpace = "\App\Helpers\Arrays\Sort";
+    private static string $nameSpace = "\App\Helpers\Arrays\Sort";
 
     public function getInstance(ArraySortType $sortType): SortInterface
     {
-        $sortClass = static::$sortNameSpace . "\\" . $sortType->name;
-        static::$instances[$sortType->name] = new $sortClass();
-
+        if (!key_exists($sortType->name, static::$instances)) {
+            $this->writeInstanceToCache($sortType);
+        }
         return static::$instances[$sortType->name];
     }
 
@@ -23,5 +23,11 @@ class ArraySortFactory
             $this->getInstance($sortType);
         }
         return static::$instances;
+    }
+
+    private function writeInstanceToCache(ArraySortType $sortType): void
+    {
+        $sortClass = static::$nameSpace . "\\" . $sortType->value;
+        static::$instances[$sortType->name] = new $sortClass();
     }
 }

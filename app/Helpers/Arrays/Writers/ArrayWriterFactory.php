@@ -5,24 +5,28 @@ namespace App\Helpers\Arrays\Writers;
 class ArrayWriterFactory
 {
     private static array $instances = [];
-    private array $writeClasses = [
-        "\App\Helpers\Arrays\Writers\ArrayToFile",
-        "\App\Helpers\Arrays\Writers\MysqlWriter",
-    ];
+    private static string $nameSpace = "\App\Helpers\Arrays\Writers";
 
-    public function getInstance(string $writerClass): WriteInterface
+    public function getInstance(ArrayWriterType $writerType): WriteInterface
     {
-        if (!key_exists($writerClass, static::$instances)) {
-            static::$instances[$writerClass] = new $writerClass();
+        if (!key_exists($writerType->name, static::$instances)) {
+            $this->writeInstanceToCache($writerType);
         }
-        return static::$instances[$writerClass];
+        return static::$instances[$writerType->name];
     }
 
     public function getAll(): array
     {
-        foreach ($this->writeClasses as $className) {
-            $this->getInstance($className);
+        foreach (ArrayWriterType::cases() as $writerType) {
+            $this->getInstance($writerType);
         }
         return static::$instances;
     }
+
+    private function writeInstanceToCache(ArrayWriterType $writerType): void
+    {
+        $sortClass = static::$nameSpace . "\\" . $writerType->value;
+        static::$instances[$writerType->name] = new $sortClass();
+    }
+
 }

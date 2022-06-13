@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Sort;
 
 use App\Helpers\Arrays\Sort\ArraySortFactory;
 use App\Helpers\Arrays\Sort\ArraySortType;
@@ -8,9 +8,7 @@ use App\Helpers\Arrays\Sort\Diagonal;
 use App\Helpers\Arrays\Sort\Horizontal;
 use App\Helpers\Arrays\Sort\Snail;
 use App\Helpers\Arrays\Sort\Snake;
-use App\Helpers\Arrays\Sort\SortInterface;
 use App\Helpers\Arrays\Sort\Vertical;
-use App\Helpers\Arrays\Writers\ArrayWriterFactory;
 use PHPUnit\Framework\TestCase;
 
 class ArraySortFactoryTest extends TestCase
