@@ -5598,25 +5598,23 @@ var MainContainer = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "printArray",
     value: function printArray() {
-      this.loadData("");
+      this.loadData(apiRouteSort); // /api/array/write
     }
   }, {
     key: "writeToDBArray",
     value: function writeToDBArray() {
-      this.loadData("/write");
+      this.loadData(apiRouteWrite); // /api/array/write
     }
   }, {
     key: "buildAPIUrl",
-    value: function buildAPIUrl() {
-      var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-      return "/api/array" + action + "/?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort;
+    value: function buildAPIUrl(action) {
+      return action + "/?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort;
     }
   }, {
     key: "loadData",
-    value: function loadData() {
+    value: function loadData(action) {
       var _this2 = this;
 
-      var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
       var url = this.buildAPIUrl(action);
       fetch(url, {
         method: 'GET',
@@ -5645,7 +5643,7 @@ var MainContainer = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      this.loadData();
+      this.loadData(apiRouteSort);
     }
   }, {
     key: "render",

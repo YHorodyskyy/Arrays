@@ -34,5 +34,10 @@
             Created by YHorodyskyy)) · © 2022
         </footer>
     </div>
+    // Pass data to react
+    <script>
+        let apiRouteSort= '{{ route("array.index") }}'
+        let apiRouteWrite= '{{ route("array.write") }}'
+    </script>
 </body>
 </html>

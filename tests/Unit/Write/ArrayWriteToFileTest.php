@@ -3,24 +3,20 @@
 namespace Tests\Unit\Write;
 
 use App\Helpers\Arrays\Writers\ArrayToFile;
-use App\Helpers\Arrays\Writers\DownloadInterface;
-use App\Helpers\Arrays\Writers\MysqlWriter;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class ArrayWriteTest extends TestCase
+class ArrayWriteToFileTest extends TestCase
 {
-    use RefreshDatabase;
-
     /**
      * @dataProvider provide_data_to_write
      * @param array $inputArray
      * @param array $outputArray
      * @param string $label
+     * @param string $expected
      * @return void
      */
-    public function test_array_written_to_file(array $inputArray, array $outputArray, string $label): void
+    public function test_array_written_to_file(array $inputArray, array $outputArray, string $label, string $expected): void
     {
         $fakeDisk = "fake-disk";
         $fileName = "tmp.txt";
@@ -29,23 +25,7 @@ class ArrayWriteTest extends TestCase
         $fileWriter = new ArrayToFile($fileName, $fakeDisk);
         $fileWriter->write($inputArray, $outputArray, $label);
         Storage::disk($fakeDisk)->assertExists($fileName);
-    }
-
-    /**
-     * @dataProvider provide_data_to_write
-     * @param array $inputArray
-     * @param array $outputArray
-     * @param string $label
-     * @return void
-     */
-    public function test_array_write_to_db(array $inputArray, array $outputArray, string $label): void
-    {
-        $this->assertDatabaseCount('arrays', 0);
-
-        (new MysqlWriter())->write($inputArray, $outputArray, $label);
-
-        $this->assertDatabaseCount('arrays', 1);
-
+        $this->assertEquals(Storage::disk($fakeDisk)->get($fileName), $expected);
     }
 
     public function provide_data_to_write(): array
@@ -60,7 +40,8 @@ class ArrayWriteTest extends TestCase
                     [1, 2],
                     [3, 4],
                 ],
-                "Test"
+                "Test",
+                "\nInput array\n1, 2\n3, 4\nTest\n1, 2\n3, 4\n"
             ]
         ];
     }

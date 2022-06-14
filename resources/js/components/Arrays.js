@@ -104,18 +104,18 @@ class MainContainer extends React.Component {
     }
 
     printArray() {
-        this.loadData("");
+        this.loadData(apiRouteSort); // /api/array/write
     };
 
     writeToDBArray() {
-        this.loadData("/write");
+        this.loadData(apiRouteWrite); // /api/array/write
     };
 
-    buildAPIUrl(action = '') {
-        return "/api/array" + action + "/?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort
+    buildAPIUrl(action) {
+        return action + "/?array_size=" + this.state.arraySize + "&array_sort=" + this.state.arraySort
     };
 
-    loadData(action = '') {
+    loadData(action) {
         const url = this.buildAPIUrl(action);
         fetch(url, {
             method: 'GET',
@@ -144,7 +144,7 @@ class MainContainer extends React.Component {
     };
 
     componentDidMount() {
-        this.loadData();
+        this.loadData(apiRouteSort);
     }
 
     render() {
